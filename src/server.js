@@ -21,6 +21,11 @@ const server = http.createServer(app);
 
 const websocketServer = new WebSocket.Server({ server });
 
+const hadleConnection = (socket) => {
+    console.log(socket);
+}
+websocketServer.on("connection",hadleConnection);
+
 server.listen(3000, () => {
     console.log(`Listening on http://localhost:3000/`);
 });
