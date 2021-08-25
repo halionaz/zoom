@@ -1,3 +1,5 @@
+// Backend using express.js & socket protocol
+
 import express from "express";
 import http from "http";
 import WebSocket from "ws";
@@ -21,15 +23,20 @@ const server = http.createServer(app);
 
 const websocketServer = new WebSocket.Server({ server });
 
+const sockets = [];
+
 websocketServer.on("connection",(socket) => {
+    sockets.push(socket);
+    //사용자를 sockets 배열에 추가
     console.log("Connected to Browser ✅");
     socket.on("close", ()=>{
         console.log(`Disconnected from the Browser`);
     });
     socket.on("message",(message)=>{
-        console.log(message.toString());
+        sockets.forEach(eachsocket => {
+            eachsocket.send(message.toString());
+        });
     });
-    socket.send("hello, It's me...");
 });
 
 server.listen(3000, () => {

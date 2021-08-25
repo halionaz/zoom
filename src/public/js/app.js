@@ -1,8 +1,7 @@
-const button = document.querySelector("button");
+// Vanilla JS Frontend
 
-button.addEventListener("click",()=>{
-    alert("Click!");
-});
+const messageList = document.querySelector("ul");
+const messageForm = document.querySelector("form");
 
 const socket = new WebSocket(`ws://${window.location.host}`);
 
@@ -18,7 +17,11 @@ socket.addEventListener("close",()=>{
     console.log("Disconnected from Server ❌");
 } );
 
-setTimeout(()=>{
-    console.log("Send Message to Server");
-    socket.send("Yallo, It's me mario!");
-},5000);
+
+messageForm.addEventListener("submit",(event) => {
+    event.preventDefault();
+    const input = messageForm.querySelector("input");
+    console.log(input.value);
+    socket.send(input.value);
+    input.value = "";
+})
