@@ -27,15 +27,24 @@ const sockets = [];
 
 websocketServer.on("connection",(socket) => {
     sockets.push(socket);
+    socket.nickname = "익명";
     //사용자를 sockets 배열에 추가
     console.log("Connected to Browser ✅");
     socket.on("close", ()=>{
         console.log(`Disconnected from the Browser`);
     });
     socket.on("message",(message)=>{
-        sockets.forEach(eachsocket => {
-            eachsocket.send(message.toString());
-        });
+        const parsed = JSON.parse(message);
+        switch(parsed.type){
+            case "message" :
+                sockets.forEach(eachsocket => {
+                    eachsocket.send(`${socket.nickname} : ${parsed.payload}`);
+                });
+                break;
+            case "nickname" :
+                socket["nickname"] = parsed.payload;
+                break;
+        }
     });
 });
 
