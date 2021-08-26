@@ -2,7 +2,8 @@
 
 import express from "express";
 import http from "http";
-import WebSocket from "ws";
+import socketIO from "socket.io";
+// import WebSocket from "ws";
 
 const app = express();
 
@@ -20,33 +21,36 @@ app.get("/*",(req,res)=>{
 });
 
 const server = http.createServer(app);
+const io = socketIO(server);
 
-const websocketServer = new WebSocket.Server({ server });
+io.on("connection", (socket) => {
+    console.log(socket);
+})
 
-const sockets = [];
-
-websocketServer.on("connection",(socket) => {
-    sockets.push(socket);
-    socket.nickname = "익명";
-    //사용자를 sockets 배열에 추가
-    console.log("Connected to Browser ✅");
-    socket.on("close", ()=>{
-        console.log(`Disconnected from the Browser`);
-    });
-    socket.on("message",(message)=>{
-        const parsed = JSON.parse(message);
-        switch(parsed.type){
-            case "message" :
-                sockets.forEach(eachsocket => {
-                    eachsocket.send(`${socket.nickname} : ${parsed.payload}`);
-                });
-                break;
-            case "nickname" :
-                socket["nickname"] = parsed.payload;
-                break;
-        }
-    });
-});
+// const websocketServer = new WebSocket.Server({ server });
+// const sockets = [];
+// websocketServer.on("connection",(socket) => {
+//     sockets.push(socket);
+//     socket.nickname = "익명";
+//     //사용자를 sockets 배열에 추가
+//     console.log("Connected to Browser ✅");
+//     socket.on("close", ()=>{
+//         console.log(`Disconnected from the Browser`);
+//     });
+//     socket.on("message",(message)=>{
+//         const parsed = JSON.parse(message);
+//         switch(parsed.type){
+//             case "message" :
+//                 sockets.forEach(eachsocket => {
+//                     eachsocket.send(`${socket.nickname} : ${parsed.payload}`);
+//                 });
+//                 break;
+//             case "nickname" :
+//                 socket["nickname"] = parsed.payload;
+//                 break;
+//         }
+//     });
+// });
 
 server.listen(3000, () => {
     console.log(`Listening on http://localhost:3000/`);
