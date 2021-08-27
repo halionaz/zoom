@@ -20,6 +20,15 @@ function showRoom(){
     room.hidden = false;
     const h3 = room.querySelector("h3");
     h3.innerText = `Room ${roomname}`;
+    const msgform = room.querySelector("form");
+    msgform.addEventListener("submit",(event)=>{
+        event.preventDefault();
+        const message = room.querySelector("input");
+        socket.emit("new_message",message.value, roomname, ()=>{
+            addMessage(`You : ${message.value}`);
+            message.value = "";
+        });
+    })
 }
 
 form.addEventListener("submit",(event)=>{
@@ -33,3 +42,7 @@ form.addEventListener("submit",(event)=>{
 socket.on("welcome", ()=> {
     addMessage("Someone joined!");
 })
+socket.on("bye", ()=>{
+    addMessage("someone say bye!");
+})
+socket.on("new_message", addMessage)

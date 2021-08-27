@@ -26,11 +26,18 @@ const io = socketIO(server);
 io.on("connection", (socket) => {
     console.log(`User Connect! ✅`);
     socket.on("enter_room", (roomname,done) =>{
-        console.log(socket.rooms);
         socket.join(roomname);
-        console.log(socket.rooms);
         done();
         socket.to(roomname).emit("welcome");
+    })
+    socket.on("disconnecting", ()=>{
+        socket.rooms.forEach((room)=>{
+            socket.to(room).emit("bye");
+        });
+    })
+    socket.on("new_message",(msg,roomname,done)=>{
+        socket.to(roomname).emit("new_message",msg);
+        done();
     })
 })
 
