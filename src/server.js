@@ -25,19 +25,24 @@ const io = socketIO(server);
 
 io.on("connection", (socket) => {
     console.log(`User Connect! ✅`);
+    socket.nickname = "익명";
     socket.on("enter_room", (roomname,done) =>{
         socket.join(roomname);
         done();
-        socket.to(roomname).emit("welcome");
+        socket.to(roomname).emit("welcome",socket.nickname);
     })
     socket.on("disconnecting", ()=>{
         socket.rooms.forEach((room)=>{
-            socket.to(room).emit("bye");
+            socket.to(room).emit("bye",socket.nickname);
         });
     })
     socket.on("new_message",(msg,roomname,done)=>{
+        msg = `${socket.nickname} : ${msg}`;
         socket.to(roomname).emit("new_message",msg);
         done();
+    })
+    socket.on("nickname",(nickname) => {
+        socket["nickname"] = nickname;
     })
 })
 

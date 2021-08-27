@@ -16,8 +16,11 @@ html(lang="en")
                     button Enter Room
             #room 
                 h3
+                form#nickname
+                    input(type="text", placeholder="Set your nickname", required)
+                    button save
                 ul 
-                form
+                form#msg
                     input(type="text", placeholder="input message", required)
                     button send
         script(src="/socket.io/socket.io.js") 
