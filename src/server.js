@@ -30,6 +30,7 @@ io.on("connection", (socket) => {
         socket.join(roomname);
         console.log(socket.rooms);
         done();
+        socket.to(roomname).emit("welcome");
     })
 })
 
