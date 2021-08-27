@@ -25,13 +25,11 @@ const io = socketIO(server);
 
 io.on("connection", (socket) => {
     console.log(`User Connect! ✅`);
-    socket.on("enter_room", (msg,done) =>{
-        console.log(msg);
-
-        setTimeout(()=>{
-            done();
-        },10000);
-        
+    socket.on("enter_room", (roomname,done) =>{
+        console.log(socket.rooms);
+        socket.join(roomname);
+        console.log(socket.rooms);
+        done();
     })
 })
 

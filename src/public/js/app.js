@@ -1,13 +1,23 @@
 const socket = io();
 
 const welcome = document.querySelector("#welcome");
-const form = welcome.querySelector("form");
+const form = welcome.querySelector("form"); 
+const room = document.querySelector("#room");
+room.hidden = true;
+
+let roomname;
+
+function showRoom(){
+    welcome.hidden = true;
+    room.hidden = false;
+    const h3 = room.querySelector("h3");
+    h3.innerText = `Room ${roomname}`;
+}
 
 form.addEventListener("submit",(event)=>{
     event.preventDefault();
     const input = form.querySelector("input");
-    socket.emit("enter_room",{ payload : input.value }, ()=>{
-        console.log("프론트엔드에서 백엔드에 함수를 보냈습니다!");
-    });
+    roomname = input.value;
+    socket.emit("enter_room",input.value, showRoom);
     input.value = "";
 });
