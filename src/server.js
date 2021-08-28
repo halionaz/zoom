@@ -23,9 +23,27 @@ app.get("/*",(req,res)=>{
 const server = http.createServer(app);
 const io = socketIO(server);
 
+function findPublicRooms(){
+    const {
+        sockets:{
+            adapter: {sids, rooms},
+        },
+    } = io;
+    const publicRooms = [];
+    rooms.forEach((_,key) => {
+        if(sids.get(key) === undefined){
+            publicRooms.push(key);
+        }
+    });
+    return publicRooms;
+}
+
 io.on("connection", (socket) => {
     console.log(`User Connect! ✅`);
     socket.nickname = "익명";
+    socket.onAny((event) => {
+        console.log(io.sockets.adapter);
+    })
     socket.on("enter_room", (roomname,done) =>{
         socket.join(roomname);
         done();
