@@ -2,7 +2,8 @@
 
 import express from "express";
 import http from "http";
-import socketIO from "socket.io";
+import {Server} from "socket.io";
+const {instrument} = require("@socket.io/admin-ui");
 // import WebSocket from "ws";
 
 const app = express();
@@ -21,7 +22,16 @@ app.get("/*",(req,res)=>{
 });
 
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = new Server(server, {
+    cors: {
+      origin: ["https://admin.socket.io"],
+      credentials: true
+    }
+});
+
+instrument(io, {
+    auth: false
+});
 
 function findPublicRooms(){
     // Private room 을 제외한 public room의 배열 반환
