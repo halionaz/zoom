@@ -42,17 +42,21 @@ io.on("connection", (socket) => {
     console.log(`User Connect! ✅`);
     socket.nickname = "익명";
     socket.onAny((event) => {
-        console.log(io.sockets.adapter);
+        // console.log(io.sockets.adapter);
     })
     socket.on("enter_room", (roomname,done) =>{
         socket.join(roomname);
         done();
         socket.to(roomname).emit("welcome",socket.nickname);
+        io.sockets.emit("room_change", findPublicRooms());
     })
     socket.on("disconnecting", ()=>{
         socket.rooms.forEach((room)=>{
             socket.to(room).emit("bye",socket.nickname);
         });
+    })
+    socket.on("disconnect",()=>{
+        io.sockets.emit("room_change", findPublicRooms());
     })
     socket.on("new_message",(msg,roomname,done)=>{
         msg = `${socket.nickname} : ${msg}`;

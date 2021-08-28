@@ -52,4 +52,13 @@ socket.on("welcome", (nickname)=> {
 socket.on("bye", (nickname)=>{
     addMessage(`${nickname} say bye!`);
 })
-socket.on("new_message", addMessage)
+socket.on("new_message", addMessage);
+socket.on("room_change", (rooms) => {
+    const roomList = welcome.querySelector("ul");
+    roomList.innerHTML = "";
+    rooms.forEach((room) => {
+        const li = document.createElement("li");
+        li.innerText = room;
+        roomList.append(li);
+    });
+});
