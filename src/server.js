@@ -24,6 +24,7 @@ const server = http.createServer(app);
 const io = socketIO(server);
 
 function findPublicRooms(){
+    // Private room 을 제외한 public room의 배열 반환
     const {
         sockets:{
             adapter: {sids, rooms},
@@ -38,24 +39,35 @@ function findPublicRooms(){
     return publicRooms;
 }
 
+function countRoom(roomName){
+    // Room에 들어있는 사람 수 반환
+    return io.sockets.adapter.rooms.get(roomName)?.size;
+    // ? 옵셔널 체이닝
+}
+
 io.on("connection", (socket) => {
     console.log(`User Connect! ✅`);
     socket.nickname = "익명";
+    io.sockets.emit("room_change", findPublicRooms());
     socket.onAny((event) => {
+        // 어떠한 종류의 신호가 왔을 때든 모두 반응
         // console.log(io.sockets.adapter);
     })
     socket.on("enter_room", (roomname,done) =>{
         socket.join(roomname);
         done();
-        socket.to(roomname).emit("welcome",socket.nickname);
+        socket.to(roomname).emit("welcome",socket.nickname, countRoom(roomname));
         io.sockets.emit("room_change", findPublicRooms());
     })
     socket.on("disconnecting", ()=>{
+        // 끊어지는 중에 실행
         socket.rooms.forEach((room)=>{
-            socket.to(room).emit("bye",socket.nickname);
+            socket.to(room).emit("bye",socket.nickname, countRoom(room)-1);
+            // 아직 떠나는 중이므로 인원 수에서 한명을 빼야 함
         });
     })
     socket.on("disconnect",()=>{
+        // 끊어진 직후 실행
         io.sockets.emit("room_change", findPublicRooms());
     })
     socket.on("new_message",(msg,roomname,done)=>{
@@ -67,31 +79,6 @@ io.on("connection", (socket) => {
         socket["nickname"] = nickname;
     })
 })
-
-// const websocketServer = new WebSocket.Server({ server });
-// const sockets = [];
-// websocketServer.on("connection",(socket) => {
-//     sockets.push(socket);
-//     socket.nickname = "익명";
-//     //사용자를 sockets 배열에 추가
-//     console.log("Connected to Browser ✅");
-//     socket.on("close", ()=>{
-//         console.log(`Disconnected from the Browser`);
-//     });
-//     socket.on("message",(message)=>{
-//         const parsed = JSON.parse(message);
-//         switch(parsed.type){
-//             case "message" :
-//                 sockets.forEach(eachsocket => {
-//                     eachsocket.send(`${socket.nickname} : ${parsed.payload}`);
-//                 });
-//                 break;
-//             case "nickname" :
-//                 socket["nickname"] = parsed.payload;
-//                 break;
-//         }
-//     });
-// });
 
 server.listen(3000, () => {
     console.log(`Listening on http://localhost:3000/`);
