@@ -16,10 +16,13 @@ app.use('/public',express.static(__dirname + '/public'));
 app.get("/", (req,res) => {
     res.render("home");
 });
-app.get("/*",(req,res)=>{
-    // 다른 모든 경로를 홈으로 돌려보냄
-    res.redirect("/");
-});
+app.get("/video_call", (req, res) => {
+    res.render("video");
+})
+// app.get("/*",(req,res)=>{
+//     // 다른 모든 경로를 홈으로 돌려보냄
+//     res.redirect("/");
+// });
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -32,6 +35,8 @@ const io = new Server(server, {
 instrument(io, {
     auth: false
 });
+
+// Chatting Service
 
 function findPublicRooms(){
     // Private room 을 제외한 public room의 배열 반환
@@ -89,6 +94,9 @@ io.on("connection", (socket) => {
         socket["nickname"] = nickname;
     })
 })
+
+
+
 
 server.listen(3000, () => {
     console.log(`Listening on http://localhost:3000/`);
