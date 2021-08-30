@@ -11,9 +11,15 @@ html(lang="en")
             h1 노근본영통
             a(href="/") 채팅하러가기 
         main 
-            #myStream 
-                video#myFace(autoplay, playsinline, width="400", height="400")
-                button#mute(style="width : 141px") 음소거
-                button#camera(style="width : 141px") 카메라 끄기
+            #welcome 
+                form
+                    input(placeholder="방 이름 입력", required, type="text")
+                    button 방 들어가기
+            #call 
+                #myStream 
+                    video#myFace(autoplay, playsinline, width="400", height="400")
+                    br
+                    button#mute(style="width : 141px") 음소거
+                    button#camera(style="width : 141px") 카메라 끄기
         script(src="/socket.io/socket.io.js") 
         script(src="/public/js/videoApp.js")

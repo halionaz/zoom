@@ -68,6 +68,8 @@ io.on("connection", (socket) => {
         // 어떠한 종류의 신호가 왔을 때든 모두 반응
         // console.log(io.sockets.adapter);
     })
+
+    // 채팅 서비스
     socket.on("enter_room", (roomname,done) =>{
         socket.join(roomname);
         done();
@@ -92,6 +94,13 @@ io.on("connection", (socket) => {
     })
     socket.on("nickname",(nickname) => {
         socket["nickname"] = nickname;
+    })
+
+    //영통 서비스
+    socket.on("enter_videoRoom", (roomName, done) => {
+        socket.join(roomName);
+        done();
+        socket.to(roomName).emit("videoWelcome");
     })
 })
 
