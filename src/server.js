@@ -67,7 +67,7 @@ io.on("connection", (socket) => {
     socket.onAny((event) => {
         // 어떠한 종류의 신호가 왔을 때든 모두 반응
         // console.log(io.sockets.adapter);
-    })
+    });
 
     // 채팅 서비스
     socket.on("enter_room", (roomname,done) =>{
@@ -75,33 +75,36 @@ io.on("connection", (socket) => {
         done();
         socket.to(roomname).emit("welcome",socket.nickname, countRoom(roomname));
         io.sockets.emit("room_change", findPublicRooms());
-    })
+    });
     socket.on("disconnecting", ()=>{
         // 끊어지는 중에 실행
         socket.rooms.forEach((room)=>{
             socket.to(room).emit("bye",socket.nickname, countRoom(room)-1);
             // 아직 떠나는 중이므로 인원 수에서 한명을 빼야 함
         });
-    })
+    });
     socket.on("disconnect",()=>{
         // 끊어진 직후 실행
         io.sockets.emit("room_change", findPublicRooms());
-    })
+    });
     socket.on("new_message",(msg,roomname,done)=>{
         msg = `${socket.nickname} : ${msg}`;
         socket.to(roomname).emit("new_message",msg);
         done();
-    })
+    });
     socket.on("nickname",(nickname) => {
         socket["nickname"] = nickname;
-    })
+    });
 
     //영통 서비스
     socket.on("enter_videoRoom", (roomName, done) => {
         socket.join(roomName);
         done();
         socket.to(roomName).emit("videoWelcome");
-    })
+    });
+    socket.on("offer", (offer, roomName) => {
+        socket.to(roomName).emit("offer", offer);
+    });
 })
 
 

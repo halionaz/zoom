@@ -12,6 +12,7 @@ let myStream;
 let muted = false;
 let cameraOff = false;
 let roomName;
+let myPeerConnection;
 
 // async function getCameras(){
 //     try{
@@ -39,10 +40,11 @@ async function getMedia(){
     }
 }
 
-function startMedia(){
+async function startMedia(){
     welcome.hidden = true;
     call.hidden = false;
-    getMedia();
+    await getMedia();
+    makeConnection();
 }
 
 
@@ -79,6 +81,23 @@ welcome.querySelector("form").addEventListener("submit",(event)=>{
     input.value = "";
 })
 
-socket.on("videoWelcome", () =>{
-    console.log("Someone Join");
+// Socket Code
+
+socket.on("videoWelcome", async () =>{
+    const offer = await myPeerConnection.createOffer();
+    myPeerConnection.setLocalDescription(offer);
+    socket.emit("offer",offer,roomName);
+    console.log(offer);
 })
+socket.on("offer", async (offer) => {
+    console.log(offer);
+})
+
+// WebRTC Code
+
+function makeConnection(){
+    myPeerConnection = new RTCPeerConnection();
+    myStream.getTracks().forEach(track => {
+        myPeerConnection.addTrack(track,myStream);
+    });
+}
