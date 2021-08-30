@@ -5,6 +5,7 @@ html(lang="en")
         meta(http-equiv="X-UA-Compatible", content="IE=edge")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         link(rel="stylesheet", href="https://unpkg.com/mvp.css")
+        link(rel="stylesheet", href="../public/css/videoApp.css")
         title 노근본영통
     body 
         header 
@@ -19,7 +20,7 @@ html(lang="en")
                 #myStream 
                     video#myFace(autoplay, playsinline, width="400", height="400")
                     br
-                    button#mute(style="width : 141px") 음소거
-                    button#camera(style="width : 141px") 카메라 끄기
+                    button#mute 음소거
+                    button#camera 카메라 끄기
         script(src="/socket.io/socket.io.js") 
         script(src="/public/js/videoApp.js")

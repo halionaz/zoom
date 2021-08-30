@@ -8,60 +8,60 @@ room.hidden = true;
 let roomname;
 
 function addMessage(msg) {
-  const ul = room.querySelector("ul");
-  const li = document.createElement("li");
-  li.innerText = msg;
-  ul.appendChild(li);
+    const ul = room.querySelector("ul");
+    const li = document.createElement("li");
+    li.innerText = msg;
+    ul.appendChild(li);
 }
 
 function showRoom() {
-  welcome.hidden = true;
-  room.hidden = false;
-  const h3 = room.querySelector("h3");
-  h3.innerText = `Room ${roomname}`;
-  const msgform = room.querySelector("#msg");
-  const nameform = room.querySelector("#nickname");
-  msgform.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const message = msgform.querySelector("input");
-    socket.emit("new_message", message.value, roomname, () => {
-      addMessage(`You : ${message.value}`);
-      message.value = "";
+    welcome.hidden = true;
+    room.hidden = false;
+    const h3 = room.querySelector("h3");
+    h3.innerText = `Room ${roomname}`;
+    const msgform = room.querySelector("#msg");
+    const nameform = room.querySelector("#nickname");
+    msgform.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const message = msgform.querySelector("input");
+        socket.emit("new_message", message.value, roomname, () => {
+            addMessage(`You : ${message.value}`);
+            message.value = "";
+        });
     });
-  });
-  nameform.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const nickname = nameform.querySelector("input");
-    socket.emit("nickname", nickname.value);
-    nickname.value = "";
-  });
+    nameform.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const nickname = nameform.querySelector("input");
+        socket.emit("nickname", nickname.value);
+        nickname.value = "";
+    });
 }
 
 form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const input = form.querySelector("input");
-  roomname = input.value;
-  socket.emit("enter_room", input.value, showRoom);
-  input.value = "";
+    event.preventDefault();
+    const input = form.querySelector("input");
+    roomname = input.value;
+    socket.emit("enter_room", input.value, showRoom);
+    input.value = "";
 });
 
 socket.on("welcome", (nickname, count) => {
-  const h3 = room.querySelector("h3");
-  h3.innerText = `Room ${roomname} : (${count})`;
-  addMessage(`${nickname} joined!`);
+    const h3 = room.querySelector("h3");
+    h3.innerText = `Room ${roomname} : (${count})`;
+    addMessage(`${nickname} joined!`);
 });
 socket.on("bye", (nickname, count) => {
-  const h3 = room.querySelector("h3");
-  h3.innerText = `Room ${roomname} : (${count})`;
-  addMessage(`${nickname} say bye!`);
+    const h3 = room.querySelector("h3");
+    h3.innerText = `Room ${roomname} : (${count})`;
+    addMessage(`${nickname} say bye!`);
 });
 socket.on("new_message", addMessage);
 socket.on("room_change", (rooms) => {
-  const roomList = welcome.querySelector("ul");
-  roomList.innerHTML = "";
-  rooms.forEach((room) => {
-    const li = document.createElement("li");
-    li.innerText = room;
-    roomList.append(li);
-  });
+    const roomList = welcome.querySelector("ul");
+    roomList.innerHTML = "";
+    rooms.forEach((room) => {
+        const li = document.createElement("li");
+        li.innerText = room;
+        roomList.append(li);
+    });
 });
