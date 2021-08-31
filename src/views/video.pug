@@ -19,8 +19,10 @@ html(lang="en")
             #call 
                 #myStream 
                     video#myFace(autoplay, playsinline, width="400", height="400")
+                    video#peerFace(autoplay, playsinline, width="400", height="400")
                     br
                     button#mute 음소거
                     button#camera 카메라 끄기
+
         script(src="/socket.io/socket.io.js") 
         script(src="/public/js/videoApp.js")
